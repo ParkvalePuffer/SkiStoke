@@ -1,0 +1,11 @@
+[
+  {"name": "Whistler", "lat": 50.1163, "lon": -122.9574},
+  {"name": "Chamonix", "lat": 45.9237, "lon": 6.8694},
+  {"name": "Hakuba", "lat": 36.6975, "lon": 137.8375},
+  {"name": "Aspen", "lat": 39.1911, "lon": -106.8175},
+  {"name": "Niseko", "lat": 42.8047, "lon": 140.6874},
+  {"name": "Verbier", "lat": 46.0992, "lon": 7.2263},
+  {"name": "Bariloche", "lat": -41.1335, "lon": -71.3103},
+  {"name": "Queenstown", "lat": -45.0312, "lon": 168.6626},
+  {"name": "Ohau", "lat": -44.2333, "lon": 169.8500}
+]
