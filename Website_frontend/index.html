@@ -3,166 +3,135 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SkiStoke - Live Snow Forecasts & Mountain Conditions</title>
+  <title>SkiStoke - Your Ultimate Snow Forecast Destination</title>
   <meta name="description" content="Real-time snow forecasts, live webcams, and mountain conditions for ski resorts worldwide. Plan your next powder day with SkiStoke.">
   <meta name="keywords" content="snow forecast, ski conditions, mountain weather, powder tracking, ski resorts, snow depth">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
-    <header class="app-header">
-      <h1>❄️ SkiStoke</h1>
-      <p class="subtitle">Live Snow Forecasts & Mountain Conditions for Ski Resorts Worldwide</p>
-    </header>
-
-    <div class="controls">
-      <div class="control-group">
-        <label for="region">Select Region:</label>
-        <select id="region" aria-label="Select ski region for detailed forecast">
-          <option value="">Choose a region...</option>
-          <option value="Whistler">Whistler, Canada</option>
-          <option value="Chamonix">Chamonix, France</option>
-          <option value="Hakuba">Hakuba, Japan</option>
-          <option value="Aspen">Aspen, USA</option>
-          <option value="Niseko">Niseko, Japan</option>
-          <option value="Verbier">Verbier, Switzerland</option>
-          <option value="Bariloche">Bariloche, Argentina</option>
-          <option value="Queenstown">Queenstown, New Zealand</option>
-          <option value="Ohau">Ohau, New Zealand</option>
-        </select>
-      </div>
-
-      <div class="control-buttons">
-        <button id="refreshBtn" aria-label="Refresh weather forecast data">
-          🔄 Refresh Data
-        </button>
-        <a href="live-camera.html" class="camera-link-btn">
-          📹 Live Snow Camera
-        </a>
-      </div>
-    </div>
-
-    <!-- Live Snow Camera Feed -->
-    <div class="live-camera-section">
-      <h3>🌨️ Live Snow Depth Camera</h3>
-      <div class="camera-container">
-        <img id="live-snow-camera" src="https://secure.skircr.com/cams2/fecam8/final.jpg" 
-             alt="Live snow depth measurement" 
-             title="Live snow depth camera - refreshes every 30 seconds">
-        <div class="camera-info">
-          <p><strong>Live Snow Depth</strong></p>
-          <p>Real-time measurement from ski field</p>
-          <p class="refresh-info">Auto-refreshes every 30 seconds</p>
+    <!-- Navigation -->
+    <nav class="main-nav">
+      <div class="nav-content">
+        <div class="nav-brand">
+          <h1>❄️ SkiStoke</h1>
+        </div>
+        <div class="nav-links">
+          <a href="index.html" class="nav-link active">Home</a>
+          <a href="about.html" class="nav-link">About Us</a>
+          <a href="forecasts.html" class="nav-link">Forecasts</a>
+          <a href="live-feeds.html" class="nav-link">Live Feeds</a>
         </div>
       </div>
-    </div>
+    </nav>
 
-    <div class="forecast-container">
-      <div id="loading" class="loading hidden">
-        <div class="spinner"></div>
-        <p>Fetching latest weather data...</p>
-      </div>
-
-      <div id="forecast-table" class="forecast-table hidden">
-        <h2 id="region-title">Select a region to view detailed forecast</h2>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Weather Data</th>
-                <th id="day-1">Loading...</th>
-                <th id="day-2">Loading...</th>
-                <th id="day-3">Loading...</th>
-                <th id="day-4">Loading...</th>
-                <th id="day-5">Loading...</th>
-                <th id="day-6">Loading...</th>
-                <th id="day-7">Loading...</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="temp-row">
-                <td class="metric-label">🌡️ Temperature (°C)</td>
-                <td id="temp-1">-</td>
-                <td id="temp-2">-</td>
-                <td id="temp-3">-</td>
-                <td id="temp-4">-</td>
-                <td id="temp-5">-</td>
-                <td id="temp-6">-</td>
-                <td id="temp-7">-</td>
-              </tr>
-              <tr class="precip-row">
-                <td class="metric-label">🌧️ Precipitation (mm)</td>
-                <td id="precip-1">-</td>
-                <td id="precip-2">-</td>
-                <td id="precip-3">-</td>
-                <td id="precip-4">-</td>
-                <td id="precip-5">-</td>
-                <td id="precip-6">-</td>
-                <td id="precip-7">-</td>
-              </tr>
-              <tr class="snow-row">
-                <td class="metric-label">❄️ Forecast Snow (cm)</td>
-                <td id="snow-1">-</td>
-                <td id="snow-2">-</td>
-                <td id="snow-3">-</td>
-                <td id="snow-4">-</td>
-                <td id="snow-5">-</td>
-                <td id="snow-6">-</td>
-                <td id="snow-7">-</td>
-              </tr>
-            </tbody>
-          </table>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">Find Your Perfect Powder Day</h1>
+        <p class="hero-subtitle">Real-time snow forecasts and live webcams from the world's best ski resorts</p>
+        <div class="hero-actions">
+          <a href="forecasts.html" class="btn btn-primary">View Snow Forecasts</a>
+          <a href="live-feeds.html" class="btn btn-secondary">Watch Live Feeds</a>
         </div>
-        
-        <div class="summary-stats">
-          <div class="stat-card">
-            <h3>Total Snowfall</h3>
-            <p id="total-snow">-</p>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <div class="features-content">
+        <h2>Why Choose SkiStoke?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Real-Time Data</h3>
+            <p>Live snow forecasts updated every 30 seconds at resort elevations</p>
           </div>
-          <div class="stat-card">
-            <h3>Best Snow Day</h3>
-            <p id="best-day">-</p>
+          <div class="feature-card">
+            <div class="feature-icon">🌍</div>
+            <h3>Global Coverage</h3>
+            <p>Comprehensive forecasts for major ski resorts worldwide</p>
           </div>
-          <div class="stat-card">
-            <h3>Snow Probability</h3>
-            <p id="snow-probability">-</p>
+          <div class="feature-card">
+            <div class="feature-icon">📹</div>
+            <h3>Live Webcams</h3>
+            <p>Multiple real-time snow depth cameras from top ski destinations</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Accurate Forecasts</h3>
+            <p>Professional-grade snow accumulation forecasts from meteorological models</p>
           </div>
         </div>
       </div>
+    </section>
 
-      <div id="error-message" class="error-message hidden">
-        <p>❌ Error loading weather data. Please try again.</p>
+    <!-- Quick Stats Section -->
+    <section class="stats-section">
+      <div class="stats-content">
+        <h2>Trusted by Skiers Worldwide</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number">9</div>
+            <div class="stat-label">Ski Resorts</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">7</div>
+            <div class="stat-label">Day Forecasts</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Live Updates</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">2000m</div>
+            <div class="stat-label">Elevation Data</div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="features-section">
-      <h3>🏔️ Why Choose SkiStoke?</h3>
-      <div class="features-grid">
-        <div class="feature-card">
-          <h4>📊 Real-Time Data</h4>
-          <p>Live weather forecasts and snow conditions updated every 30 seconds</p>
-        </div>
-        <div class="feature-card">
-          <h4>🌍 Global Coverage</h4>
-          <p>Comprehensive forecasts for major ski resorts worldwide</p>
-        </div>
-        <div class="feature-card">
-          <h4>📹 Live Webcams</h4>
-          <p>Real-time snow depth cameras from ski fields around the world</p>
-        </div>
-        <div class="feature-card">
-          <h4>🎯 Accurate Predictions</h4>
-          <p>Advanced algorithms for precise snow forecasting and accumulation</p>
+    <!-- Call to Action -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2>Ready to Plan Your Next Adventure?</h2>
+        <p>Get started with our comprehensive snow forecasts and live mountain conditions</p>
+        <div class="cta-actions">
+          <a href="forecasts.html" class="btn btn-primary">Check Forecasts</a>
+          <a href="about.html" class="btn btn-outline">Learn More</a>
         </div>
       </div>
-    </div>
+    </section>
 
-    <footer>
-      <p>Powered by SkiStoke &copy; 2025 | Weather data from Open-Meteo | <a href="https://skistoke.com" style="color: #4caf50;">SkiStoke.com</a></p>
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <h3>❄️ SkiStoke</h3>
+          <p>Your ultimate snow forecast destination</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-section">
+            <h4>Navigation</h4>
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="forecasts.html">Forecasts</a>
+            <a href="live-feeds.html">Live Feeds</a>
+          </div>
+          <div class="footer-section">
+            <h4>Resources</h4>
+            <a href="#">Weather Data</a>
+            <a href="#">API Documentation</a>
+            <a href="#">Support</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SkiStoke. Powered by Open-Meteo weather data.</p>
+      </div>
     </footer>
   </div>
-
-  <script src="script.js"></script>
 </body>
 </html>

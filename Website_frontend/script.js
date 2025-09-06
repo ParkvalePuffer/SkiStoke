@@ -1,36 +1,36 @@
 // Global variables
-let currentRegion = '';
-let weatherData = null;
+let weatherData = {};
 
 // DOM elements
-const regionSelect = document.getElementById('region');
 const refreshBtn = document.getElementById('refreshBtn');
 const loadingDiv = document.getElementById('loading');
 const forecastTable = document.getElementById('forecast-table');
 const errorMessage = document.getElementById('error-message');
-const regionTitle = document.getElementById('region-title');
+const snowTableBody = document.getElementById('snow-table-body');
+
+// Ski resort data
+const skiResorts = [
+    { name: 'Whistler', country: 'Canada', lat: 50.1163, lon: -122.9574, elevation: 2000 },
+    { name: 'Chamonix', country: 'France', lat: 45.9237, lon: 6.8694, elevation: 2000 },
+    { name: 'Hakuba', country: 'Japan', lat: 36.6975, lon: 137.8375, elevation: 2000 },
+    { name: 'Aspen', country: 'USA', lat: 39.1911, lon: -106.8175, elevation: 2000 },
+    { name: 'Niseko', country: 'Japan', lat: 42.8047, lon: 140.6874, elevation: 2000 },
+    { name: 'Verbier', country: 'Switzerland', lat: 46.0992, lon: 7.2263, elevation: 2000 },
+    { name: 'Bariloche', country: 'Argentina', lat: -41.1335, lon: -71.3103, elevation: 2000 },
+    { name: 'Cardrona', country: 'New Zealand', lat: -44.8500, lon: 168.9500, elevation: 2000 },
+    { name: 'Ohau', country: 'New Zealand', lat: -44.2333, lon: 169.8500, elevation: 2000 }
+];
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     updateDateHeaders();
-    setupLiveCamera();
+    loadAllForecasts();
 });
 
 function setupEventListeners() {
-    regionSelect.addEventListener('change', function() {
-        currentRegion = this.value;
-        if (currentRegion) {
-            loadRegionForecast(currentRegion);
-        } else {
-            hideForecastTable();
-        }
-    });
-
     refreshBtn.addEventListener('click', function() {
-        if (currentRegion) {
-            loadRegionForecast(currentRegion);
-        }
+        loadAllForecasts();
     });
 }
 
@@ -48,46 +48,60 @@ function updateDateHeaders() {
     }
 }
 
-async function loadRegionForecast(regionName) {
+async function loadAllForecasts() {
     showLoading();
     hideError();
     
     try {
-        // Get the region coordinates from our regions data
-        const regionCoords = await getRegionCoordinates(regionName);
-        if (!regionCoords) {
-            throw new Error('Region coordinates not found');
-        }
-
-        // Fetch detailed weather data for the region
-        const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${regionCoords.lat}&longitude=${regionCoords.lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto&start_date=${getStartDate()}&end_date=${getEndDate()}`);
+        const promises = skiResorts.map(resort => fetchResortForecast(resort));
+        await Promise.all(promises);
         
-        if (!weatherResponse.ok) {
-            throw new Error(`Weather API error: ${weatherResponse.status}`);
-        }
-
-        weatherData = await weatherResponse.json();
-        displayForecast(regionName, weatherData);
+        displayAllForecasts();
+        hideLoading();
         
     } catch (error) {
-        console.error('Failed to load forecast:', error);
+        console.error('Failed to load forecasts:', error);
         showError('Failed to load weather data. Please try again.');
     }
 }
 
-function getRegionCoordinates(regionName) {
-    const regions = {
-        'Whistler': { lat: 50.1163, lon: -122.9574 },
-        'Chamonix': { lat: 45.9237, lon: 6.8694 },
-        'Hakuba': { lat: 36.6975, lon: 137.8375 },
-        'Aspen': { lat: 39.1911, lon: -106.8175 },
-        'Niseko': { lat: 42.8047, lon: 140.6874 },
-        'Verbier': { lat: 46.0992, lon: 7.2263 },
-        'Bariloche': { lat: -41.1335, lon: -71.3103 },
-        'Queenstown': { lat: -45.0312, lon: 168.6626 },
-        'Ohau': { lat: -44.2333, lon: 169.8500 }
-    };
-    return regions[regionName];
+async function fetchResortForecast(resort) {
+    try {
+        const startDate = getStartDate();
+        const endDate = getEndDate();
+        
+        // Try snow data first
+        const response = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${resort.lat}&longitude=${resort.lon}&elevation=${resort.elevation}&daily=snowfall_sum&timezone=auto&start_date=${startDate}&end_date=${endDate}`
+        );
+        
+        if (!response.ok) {
+            throw new Error(`Weather API error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Check if we got valid snow data
+        if (data.daily && data.daily.snowfall_sum && data.daily.snowfall_sum.some(snow => snow > 0)) {
+            weatherData[resort.name] = data;
+        } else {
+            // Fallback to precipitation + temperature estimation
+            const fallbackResponse = await fetch(
+                `https://api.open-meteo.com/v1/forecast?latitude=${resort.lat}&longitude=${resort.lon}&elevation=${resort.elevation}&daily=temperature_2m_max,precipitation_sum&timezone=auto&start_date=${startDate}&end_date=${endDate}`
+            );
+            
+            if (!fallbackResponse.ok) {
+                throw new Error(`Weather API error: ${fallbackResponse.status}`);
+            }
+            
+            const fallbackData = await fallbackResponse.json();
+            weatherData[resort.name] = fallbackData;
+        }
+        
+    } catch (error) {
+        console.error(`Failed to fetch data for ${resort.name}:`, error);
+        weatherData[resort.name] = null;
+    }
 }
 
 function getStartDate() {
@@ -101,109 +115,109 @@ function getEndDate() {
     return today.toISOString().split('T')[0];
 }
 
-function displayForecast(regionName, data) {
-    const daily = data.daily;
-    const temperatures = daily.temperature_2m_max;
-    const precipitation = daily.precipitation_sum;
+function displayAllForecasts() {
+    // Clear existing table body
+    snowTableBody.innerHTML = '';
     
-    // Update region title
-    regionTitle.textContent = `${regionName} - 7-Day Weather Forecast`;
-    
-    // Populate temperature row
-    temperatures.forEach((temp, index) => {
-        const tempElement = document.getElementById(`temp-${index + 1}`);
-        if (tempElement) {
-            tempElement.textContent = `${temp.toFixed(1)}°C`;
-            tempElement.style.color = getTemperatureColor(temp);
-        }
-    });
-    
-    // Populate precipitation row
-    precipitation.forEach((precip, index) => {
-        const precipElement = document.getElementById(`precip-${index + 1}`);
-        if (precipElement) {
-            precipElement.textContent = precip > 0 ? `${precip.toFixed(1)} mm` : '0 mm';
-            precipElement.style.color = precip > 0 ? '#1976d2' : '#666';
-        }
-    });
-    
-    // Calculate and populate snow forecast row
-    const snowForecasts = calculateSnowForecasts(temperatures, precipitation);
-    snowForecasts.forEach((snow, index) => {
-        const snowElement = document.getElementById(`snow-${index + 1}`);
-        if (snowElement) {
-            snowElement.textContent = snow > 0 ? `${snow.toFixed(1)} cm` : '0 cm';
-            snowElement.style.color = snow > 0 ? '#7b1fa2' : '#666';
-            snowElement.style.fontWeight = snow > 0 ? '700' : '400';
-        }
-    });
-    
-    // Update summary statistics
-    updateSummaryStats(snowForecasts);
-    
-    // Show the forecast table
-    hideLoading();
-    showForecastTable();
-}
-
-function calculateSnowForecasts(temperatures, precipitation) {
-    const snowForecasts = [];
-    
-    for (let i = 0; i < temperatures.length; i++) {
-        const temp = temperatures[i];
-        const precip = precipitation[i];
+    // Create rows for each resort
+    skiResorts.forEach(resort => {
+        const row = document.createElement('tr');
         
-        if (precip > 0) {
-            let snowCm = 0;
-            if (temp < 0) {
-                snowCm = precip * 15; // Very cold = more snow
-            } else if (temp < 5) {
-                snowCm = precip * 10; // Cold = good snow
-            } else if (temp < 10) {
-                snowCm = precip * 5;  // Cool = possible snow
+        // Resort name cell
+        const nameCell = document.createElement('td');
+        nameCell.className = 'metric-label';
+        nameCell.textContent = `${resort.name}, ${resort.country}`;
+        row.appendChild(nameCell);
+        
+        // Snow forecast cells for each day
+        const resortData = weatherData[resort.name];
+        if (resortData && resortData.daily) {
+            if (resortData.daily.snowfall_sum) {
+                // Use direct snow data
+                const snowfall = resortData.daily.snowfall_sum;
+                
+                for (let i = 0; i < 7; i++) {
+                    const snowCell = document.createElement('td');
+                    snowCell.className = 'snow-cell';
+                    
+                    const snowAmount = snowfall[i] / 10; // Convert mm to cm
+                    const snowQuality = getSnowQuality(snowAmount);
+                    
+                    snowCell.innerHTML = `
+                        <div class="snow-amount">${snowAmount.toFixed(1)} cm</div>
+                        <div class="snow-bar ${snowQuality}"></div>
+                    `;
+                    
+                    row.appendChild(snowCell);
+                }
+            } else if (resortData.daily.temperature_2m_max && resortData.daily.precipitation_sum) {
+                // Use fallback estimation
+                const temperatures = resortData.daily.temperature_2m_max;
+                const precipitation = resortData.daily.precipitation_sum;
+                
+                for (let i = 0; i < 7; i++) {
+                    const snowCell = document.createElement('td');
+                    snowCell.className = 'snow-cell';
+                    
+                    const temp = temperatures[i];
+                    const precip = precipitation[i];
+                    const snowAmount = estimateSnowFromTempPrecip(temp, precip);
+                    const snowQuality = getSnowQuality(snowAmount);
+                    
+                    snowCell.innerHTML = `
+                        <div class="snow-amount">${snowAmount.toFixed(1)} cm</div>
+                        <div class="snow-bar ${snowQuality}"></div>
+                    `;
+                    
+                    row.appendChild(snowCell);
+                }
+            } else {
+                // Handle missing data
+                for (let i = 0; i < 7; i++) {
+                    const snowCell = document.createElement('td');
+                    snowCell.className = 'snow-cell';
+                    snowCell.innerHTML = `
+                        <div class="snow-amount">-</div>
+                        <div class="snow-bar red"></div>
+                    `;
+                    row.appendChild(snowCell);
+                }
             }
-            snowForecasts.push(snowCm);
         } else {
-            snowForecasts.push(0);
+            // Handle missing data
+            for (let i = 0; i < 7; i++) {
+                const snowCell = document.createElement('td');
+                snowCell.className = 'snow-cell';
+                snowCell.innerHTML = `
+                    <div class="snow-amount">-</div>
+                    <div class="snow-bar red"></div>
+                `;
+                row.appendChild(snowCell);
+            }
         }
-    }
-    
-    return snowForecasts;
+        
+        snowTableBody.appendChild(row);
+    });
 }
 
-function updateSummaryStats(snowForecasts) {
-    const totalSnow = snowForecasts.reduce((sum, snow) => sum + snow, 0);
-    const bestDayIndex = snowForecasts.indexOf(Math.max(...snowForecasts));
-    const snowDays = snowForecasts.filter(snow => snow > 0).length;
-    const snowProbability = Math.round((snowDays / 7) * 100);
-    
-    // Update total snowfall
-    const totalSnowElement = document.getElementById('total-snow');
-    if (totalSnowElement) {
-        totalSnowElement.textContent = `${totalSnow.toFixed(1)} cm`;
-    }
-    
-    // Update best snow day
-    const bestDayElement = document.getElementById('best-day');
-    if (bestDayElement && bestDayIndex >= 0) {
-        const bestDate = new Date();
-        bestDate.setDate(bestDate.getDate() + bestDayIndex);
-        const dayName = bestDate.toLocaleDateString('en-US', { weekday: 'long' });
-        bestDayElement.textContent = `${dayName}\n(${snowForecasts[bestDayIndex].toFixed(1)} cm)`;
-    }
-    
-    // Update snow probability
-    const probabilityElement = document.getElementById('snow-probability');
-    if (probabilityElement) {
-        probabilityElement.textContent = `${snowProbability}%`;
-    }
+function getSnowQuality(snowAmount) {
+    if (snowAmount === 0) return 'red';
+    if (snowAmount <= 5) return 'orange';
+    return 'green';
 }
 
-function getTemperatureColor(temp) {
-    if (temp < 0) return '#1976d2';      // Blue for cold
-    if (temp < 10) return '#388e3c';     // Green for cool
-    if (temp < 20) return '#f57c00';     // Orange for mild
-    return '#d32f2f';                    // Red for warm
+function estimateSnowFromTempPrecip(temp, precip) {
+    if (precip <= 0) return 0;
+    
+    if (temp < 0) {
+        return precip * 15; // Very cold = more snow
+    } else if (temp < 5) {
+        return precip * 10; // Cold = good snow
+    } else if (temp < 10) {
+        return precip * 5;  // Cool = possible snow
+    } else {
+        return 0; // Too warm for snow
+    }
 }
 
 function showLoading() {
@@ -214,16 +228,7 @@ function showLoading() {
 
 function hideLoading() {
     loadingDiv.classList.add('hidden');
-}
-
-function showForecastTable() {
     forecastTable.classList.remove('hidden');
-}
-
-function hideForecastTable() {
-    forecastTable.classList.add('hidden');
-    loadingDiv.classList.add('hidden');
-    errorMessage.classList.add('hidden');
 }
 
 function showError(message) {
@@ -236,39 +241,3 @@ function hideError() {
     errorMessage.classList.add('hidden');
 }
 
-// Live Snow Camera Functions
-function setupLiveCamera() {
-    // Auto-refresh the camera image every 30 seconds
-    setInterval(refreshCameraImage, 30000);
-    
-    // Add click handler to manually refresh
-    const cameraImg = document.getElementById('live-snow-camera');
-    if (cameraImg) {
-        cameraImg.addEventListener('click', function() {
-            refreshCameraImage();
-            showCameraRefreshMessage();
-        });
-    }
-}
-
-function refreshCameraImage() {
-    const cameraImg = document.getElementById('live-snow-camera');
-    if (cameraImg) {
-        // Add timestamp to prevent caching
-        const timestamp = new Date().getTime();
-        cameraImg.src = `https://secure.skircr.com/cams2/fecam8/final.jpg?t=${timestamp}`;
-    }
-}
-
-function showCameraRefreshMessage() {
-    const cameraImg = document.getElementById('live-snow-camera');
-    if (cameraImg) {
-        // Show a brief "refreshing" message
-        const originalSrc = cameraImg.src;
-        cameraImg.style.opacity = '0.7';
-        
-        setTimeout(() => {
-            cameraImg.style.opacity = '1';
-        }, 1000);
-    }
-}

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Snow Feeds - SkiStoke</title>
+  <meta name="description" content="Watch live snow depth cameras from ski resorts worldwide. Real-time webcam feeds from Copper Mountain, Whistler, and more.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- Navigation -->
+    <nav class="main-nav">
+      <div class="nav-content">
+        <div class="nav-brand">
+          <h1>❄️ SkiStoke</h1>
+        </div>
+        <div class="nav-links">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="about.html" class="nav-link">About Us</a>
+          <a href="forecasts.html" class="nav-link">Forecasts</a>
+          <a href="live-feeds.html" class="nav-link active">Live Feeds</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="page-header-content">
+        <h1>Live Snow Feeds</h1>
+        <p>Real-time webcam feeds from ski resorts worldwide</p>
+      </div>
+    </section>
+
+    <!-- Webcam Selector -->
+    <section class="webcam-selector-section">
+      <div class="webcam-selector">
+        <h3>Select Webcam Feed</h3>
+        <div class="webcam-options">
+          <div class="webcam-option active" data-webcam="snow-depth">
+            <div class="webcam-name">Snow Depth Camera</div>
+            <div class="webcam-description">Live snow depth measurement</div>
+          </div>
+          <div class="webcam-option" data-webcam="copper-mountain">
+            <div class="webcam-name">Copper Mountain Snow Stake</div>
+            <div class="webcam-description">Official snow stake cam from Copper Mountain</div>
+          </div>
+          <div class="webcam-option" data-webcam="whistler">
+            <div class="webcam-name">Whistler Blackcomb</div>
+            <div class="webcam-description">Live conditions from Whistler Mountain</div>
+          </div>
+          <div class="webcam-option" data-webcam="aspen">
+            <div class="webcam-name">Aspen Snowmass</div>
+            <div class="webcam-description">Live feed from Aspen Mountain</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Camera Feed -->
+    <section class="live-camera-section">
+      <div class="camera-container">
+        <div class="loading-overlay" id="loading-overlay">
+          <div class="spinner"></div>
+          <p>Loading webcam...</p>
+        </div>
+        <img id="live-snow-camera" 
+             src="https://secure.skircr.com/cams2/fecam8/final.jpg" 
+             alt="Live snow depth measurement" 
+             title="Live snow depth camera - refreshes every 30 seconds">
+      </div>
+      
+      <div class="camera-info">
+        <div class="current-webcam-info">
+          <h3 id="current-webcam-name">Snow Depth Camera</h3>
+          <p id="current-webcam-description">Live snow depth measurement</p>
+        </div>
+        
+        <div class="camera-stats">
+          <div class="stat-card">
+            <h4>Current Webcam</h4>
+            <p id="current-webcam-stat">Snow Depth Camera</p>
+          </div>
+          <div class="stat-card">
+            <h4>Refresh Rate</h4>
+            <p>Every 30 seconds</p>
+          </div>
+          <div class="stat-card">
+            <h4>Last Updated</h4>
+            <p id="last-updated">Just now</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About These Cameras -->
+    <section class="about-cameras-section">
+      <div class="about-cameras-content">
+        <h2>About These Cameras</h2>
+        <p>Our live webcam feeds provide real-time visual confirmation of snow conditions at ski resorts worldwide. These cameras are strategically positioned to show:</p>
+        <ul>
+          <li><strong>Snow Depth Measurements:</strong> Visual confirmation of actual snow accumulation</li>
+          <li><strong>Weather Conditions:</strong> Current visibility and weather patterns</li>
+          <li><strong>Mountain Conditions:</strong> Real-time view of slopes and terrain</li>
+          <li><strong>Snow Quality:</strong> Visual assessment of snow texture and conditions</li>
+        </ul>
+        <p>All webcam feeds are updated every 30 seconds to ensure you have the most current information for planning your ski day.</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <h3>❄️ SkiStoke</h3>
+          <p>Your ultimate snow forecast destination</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-section">
+            <h4>Navigation</h4>
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="forecasts.html">Forecasts</a>
+            <a href="live-feeds.html">Live Feeds</a>
+          </div>
+          <div class="footer-section">
+            <h4>Resources</h4>
+            <a href="#">Weather Data</a>
+            <a href="#">API Documentation</a>
+            <a href="#">Support</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SkiStoke. Powered by Open-Meteo weather data.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Webcam management
+    let currentWebcam = 'snow-depth';
+    
+    // Webcam configurations
+    const webcams = {
+      'snow-depth': {
+        name: 'Snow Depth Camera',
+        url: 'https://secure.skircr.com/cams2/fecam8/final.jpg',
+        description: 'Live snow depth measurement'
+      },
+      'copper-mountain': {
+        name: 'Copper Mountain Snow Stake',
+        url: 'https://www.coppercolorado.com/sites/default/files/webcams/snowstake.jpg',
+        fallbackUrl: 'https://www.coppercolorado.com/sites/default/files/webcams/snowstake.jpg',
+        description: 'Official snow stake cam from Copper Mountain'
+      },
+      'whistler': {
+        name: 'Whistler Blackcomb',
+        url: 'https://secure.skircr.com/cams2/fecam1/final.jpg',
+        description: 'Live conditions from Whistler Mountain'
+      },
+      'aspen': {
+        name: 'Aspen Snowmass',
+        url: 'https://secure.skircr.com/cams2/fecam2/final.jpg',
+        description: 'Live feed from Aspen Mountain'
+      }
+    };
+
+    // Initialize webcam functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      setupWebcamSelector();
+      refreshCamera();
+      
+      // Auto-refresh every 30 seconds
+      setInterval(refreshCamera, 30000);
+    });
+
+    function setupWebcamSelector() {
+      const options = document.querySelectorAll('.webcam-option');
+      options.forEach(option => {
+        option.addEventListener('click', function() {
+          const webcamId = this.dataset.webcam;
+          switchWebcam(webcamId);
+          
+          // Update active state
+          options.forEach(opt => opt.classList.remove('active'));
+          this.classList.add('active');
+        });
+      });
+    }
+
+    function switchWebcam(webcamId) {
+      currentWebcam = webcamId;
+      const webcam = webcams[webcamId];
+      
+      // Update info
+      document.getElementById('current-webcam-name').textContent = webcam.name;
+      document.getElementById('current-webcam-description').textContent = webcam.description;
+      document.getElementById('current-webcam-stat').textContent = webcam.name;
+      
+      // Switch camera
+      refreshCamera();
+    }
+
+    function refreshCamera() {
+      const cameraImg = document.getElementById('live-snow-camera');
+      const webcam = webcams[currentWebcam];
+      
+      showLoading();
+      
+      // Add timestamp to prevent caching
+      const timestamp = new Date().getTime();
+      const imageUrl = `${webcam.url}?t=${timestamp}`;
+      
+      cameraImg.onload = function() {
+        hideLoading();
+        updateLastUpdated();
+      };
+      
+      cameraImg.onerror = function() {
+        handleImageError();
+      };
+      
+      cameraImg.src = imageUrl;
+    }
+
+    function showLoading() {
+      document.getElementById('loading-overlay').style.display = 'flex';
+    }
+
+    function hideLoading() {
+      document.getElementById('loading-overlay').style.display = 'none';
+    }
+
+    function handleImageError() {
+      const webcam = webcams[currentWebcam];
+      if (webcam.fallbackUrl) {
+        const cameraImg = document.getElementById('live-snow-camera');
+        cameraImg.src = webcam.fallbackUrl;
+        hideLoading();
+        updateLastUpdated();
+      } else {
+        hideLoading();
+        console.error('Failed to load webcam image');
+      }
+    }
+
+    function updateLastUpdated() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString();
+      document.getElementById('last-updated').textContent = timeString;
+    }
+  </script>
+</body>
+</html>
