@@ -80,8 +80,10 @@
           <h2>Our Technology</h2>
           <p>SkiStoke leverages advanced weather APIs and meteorological models to provide accurate snow forecasts. Our system:</p>
           <ul class="tech-list">
-            <li><strong>Uses elevation-specific data</strong> - We pull forecasts at actual resort elevations for maximum accuracy</li>
+            <li><strong>Uses dual data sources</strong> - We integrate both GFS (Global Forecast System) and Open-Meteo models for maximum accuracy</li>
+            <li><strong>Prefers GFS data</strong> - The NOAA Global Forecast System provides high-resolution global weather predictions</li>
             <li><strong>Implements fallback systems</strong> - When direct snow data isn't available, we use temperature and precipitation models</li>
+            <li><strong>Uses elevation-specific data</strong> - We pull forecasts at actual resort elevations for maximum accuracy</li>
             <li><strong>Provides visual indicators</strong> - Color-coded bars help you quickly assess snow quality</li>
             <li><strong>Updates continuously</strong> - Data refreshes automatically to keep you informed</li>
           </ul>

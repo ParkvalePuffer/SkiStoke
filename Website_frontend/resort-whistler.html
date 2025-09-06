@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Whistler Snow Forecast - SkiStoke</title>
+  <meta name="description" content="Real-time snow forecasts, live webcams, and mountain conditions for Whistler, Canada. Plan your perfect powder day at Whistler Blackcomb.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- Navigation -->
+    <nav class="main-nav">
+      <div class="nav-content">
+        <div class="nav-brand">
+          <h1>❄️ SkiStoke</h1>
+        </div>
+        <div class="nav-links">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="about.html" class="nav-link">About Us</a>
+          <a href="forecasts.html" class="nav-link">Forecasts</a>
+          <a href="live-feeds.html" class="nav-link">Live Feeds</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Resort Header -->
+    <section class="resort-header">
+      <div class="resort-header-content">
+        <div class="resort-info">
+          <h1>🏔️ Whistler</h1>
+          <p class="resort-location">Canada</p>
+          <p class="resort-description">World-renowned ski resort with two mountains, Whistler and Blackcomb, offering over 8,000 acres of skiable terrain.</p>
+        </div>
+        <div class="resort-stats">
+          <div class="resort-stat">
+            <div class="stat-value">2,182m</div>
+            <div class="stat-label">Summit Elevation</div>
+          </div>
+          <div class="resort-stat">
+            <div class="stat-value">8,171</div>
+            <div class="stat-label">Acres</div>
+          </div>
+          <div class="resort-stat">
+            <div class="stat-value">37</div>
+            <div class="stat-label">Lifts</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Current Conditions -->
+    <section class="current-conditions">
+      <div class="conditions-content">
+        <h2>Current Conditions</h2>
+        <div class="conditions-grid">
+          <div class="condition-card">
+            <div class="condition-icon">❄️</div>
+            <div class="condition-info">
+              <h3>Snow Depth</h3>
+              <p id="current-snow-depth">Loading...</p>
+            </div>
+          </div>
+          <div class="condition-card">
+            <div class="condition-icon">🌡️</div>
+            <div class="condition-info">
+              <h3>Temperature</h3>
+              <p id="current-temperature">Loading...</p>
+            </div>
+          </div>
+          <div class="condition-card">
+            <div class="condition-icon">🌬️</div>
+            <div class="condition-info">
+              <h3>Wind Speed</h3>
+              <p id="current-wind">Loading...</p>
+            </div>
+          </div>
+          <div class="condition-card">
+            <div class="condition-icon">👁️</div>
+            <div class="condition-info">
+              <h3>Visibility</h3>
+              <p id="current-visibility">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7-Day Forecast -->
+    <section class="resort-forecast">
+      <div class="forecast-content">
+        <h2>7-Day Snow Forecast</h2>
+        <div class="forecast-controls">
+          <button id="refresh-resort-btn" class="btn btn-primary">🔄 Refresh Forecast</button>
+        </div>
+        
+        <div id="resort-loading" class="loading hidden">
+          <div class="spinner"></div>
+          <p>Fetching latest forecast data...</p>
+        </div>
+
+        <div id="resort-forecast-table" class="forecast-table">
+          <div class="table-wrapper">
+            <table id="resort-snow-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th id="resort-day-1">Loading...</th>
+                  <th id="resort-day-2">Loading...</th>
+                  <th id="resort-day-3">Loading...</th>
+                  <th id="resort-day-4">Loading...</th>
+                  <th id="resort-day-5">Loading...</th>
+                  <th id="resort-day-6">Loading...</th>
+                  <th id="resort-day-7">Loading...</th>
+                </tr>
+              </thead>
+              <tbody id="resort-snow-table-body">
+                <!-- Rows will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Webcam -->
+    <section class="resort-webcam">
+      <div class="webcam-content">
+        <h2>Live Mountain View</h2>
+        <div class="webcam-container">
+          <div class="loading-overlay" id="webcam-loading">
+            <div class="spinner"></div>
+            <p>Loading webcam...</p>
+          </div>
+          <img id="resort-webcam" 
+               src="https://secure.skircr.com/cams2/fecam1/final.jpg" 
+               alt="Live view of Whistler Mountain" 
+               title="Live webcam feed from Whistler">
+        </div>
+        <div class="webcam-info">
+          <p><strong>Live Webcam Feed</strong></p>
+          <p>Real-time view of Whistler Mountain conditions</p>
+          <p class="webcam-update">Last updated: <span id="webcam-timestamp">Just now</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resort Information -->
+    <section class="resort-info-section">
+      <div class="resort-info-content">
+        <h2>About Whistler</h2>
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>🏔️ Mountain Stats</h3>
+            <ul>
+              <li><strong>Whistler Mountain:</strong> 2,182m summit</li>
+              <li><strong>Blackcomb Mountain:</strong> 2,284m summit</li>
+              <li><strong>Vertical Drop:</strong> 1,610m</li>
+              <li><strong>Skiable Terrain:</strong> 8,171 acres</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h3>🎿 Terrain Breakdown</h3>
+            <ul>
+              <li><strong>Beginner:</strong> 20%</li>
+              <li><strong>Intermediate:</strong> 55%</li>
+              <li><strong>Advanced:</strong> 25%</li>
+              <li><strong>Total Runs:</strong> 200+</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h3>🚠 Lift System</h3>
+            <ul>
+              <li><strong>Total Lifts:</strong> 37</li>
+              <li><strong>Gondolas:</strong> 2</li>
+              <li><strong>High-Speed Quads:</strong> 12</li>
+              <li><strong>Peak 2 Peak:</strong> World's longest gondola</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <h3>❄️ Snow Conditions</h3>
+            <ul>
+              <li><strong>Average Annual Snowfall:</strong> 11.7m</li>
+              <li><strong>Snowmaking:</strong> Yes</li>
+              <li><strong>Season:</strong> November - May</li>
+              <li><strong>Best Months:</strong> December - March</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <h3>❄️ SkiStoke</h3>
+          <p>Your ultimate snow forecast destination</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-section">
+            <h4>Navigation</h4>
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="forecasts.html">Forecasts</a>
+            <a href="live-feeds.html">Live Feeds</a>
+          </div>
+          <div class="footer-section">
+            <h4>Resources</h4>
+            <a href="#">Weather Data</a>
+            <a href="#">API Documentation</a>
+            <a href="#">Support</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SkiStoke. Powered by Open-Meteo weather data.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Resort data
+    const resortData = {
+      name: 'Whistler',
+      country: 'Canada',
+      slug: 'whistler',
+      lat: 50.1163,
+      lon: -122.9574,
+      elevation: 2000
+    };
+
+    let weatherData = null;
+
+    // Initialize the resort page
+    document.addEventListener('DOMContentLoaded', function() {
+      updateDateHeaders();
+      loadResortForecast();
+      setupWebcam();
+      setupEventListeners();
+    });
+
+    function setupEventListeners() {
+      document.getElementById('refresh-resort-btn').addEventListener('click', function() {
+        loadResortForecast();
+      });
+    }
+
+    function updateDateHeaders() {
+      const today = new Date();
+      for (let i = 1; i <= 7; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i - 1);
+        const dayElement = document.getElementById(`resort-day-${i}`);
+        if (dayElement) {
+          const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+          const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          dayElement.textContent = `${dayName}\n${monthDay}`;
+        }
+      }
+    }
+
+    async function loadResortForecast() {
+      showResortLoading();
+      hideResortError();
+      
+      try {
+        const startDate = getStartDate();
+        const endDate = getEndDate();
+        
+        // Fetch both Open-Meteo and GFS data in parallel
+        const [openMeteoResponse, gfsResponse] = await Promise.all([
+          fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${resortData.lat}&longitude=${resortData.lon}&elevation=${resortData.elevation}&daily=snowfall_sum,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto&start_date=${startDate}&end_date=${endDate}`
+          ),
+          fetch(
+            `https://api.open-meteo.com/v1/gfs?latitude=${resortData.lat}&longitude=${resortData.lon}&elevation=${resortData.elevation}&daily=snowfall_sum,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto&start_date=${startDate}&end_date=${endDate}`
+          )
+        ]);
+        
+        const openMeteoData = openMeteoResponse.ok ? await openMeteoResponse.json() : null;
+        const gfsData = gfsResponse.ok ? await gfsResponse.json() : null;
+        
+        weatherData = {
+          openMeteo: openMeteoData,
+          gfs: gfsData,
+          resort: resortData
+        };
+        
+        displayResortForecast();
+        hideResortLoading();
+        
+      } catch (error) {
+        console.error('Failed to load resort forecast:', error);
+        showResortError('Failed to load weather data. Please try again.');
+      }
+    }
+
+    function getStartDate() {
+      const today = new Date();
+      return today.toISOString().split('T')[0];
+    }
+
+    function getEndDate() {
+      const today = new Date();
+      today.setDate(today.getDate() + 6);
+      return today.toISOString().split('T')[0];
+    }
+
+    function displayResortForecast() {
+      const tableBody = document.getElementById('resort-snow-table-body');
+      tableBody.innerHTML = '';
+      
+      if (!weatherData) return;
+      
+      // Get the best available data source
+      const dataSource = getBestDataSource(weatherData);
+      
+      if (dataSource && dataSource.daily) {
+        // Create snow forecast row
+        const snowRow = document.createElement('tr');
+        snowRow.innerHTML = '<td class="metric-label">❄️ Snow (cm)</td>';
+        
+        if (dataSource.daily.snowfall_sum) {
+          const snowfall = dataSource.daily.snowfall_sum;
+          const dataSourceLabel = getDataSourceLabel(weatherData, dataSource);
+          
+          for (let i = 0; i < 7; i++) {
+            const snowCell = document.createElement('td');
+            snowCell.className = 'snow-cell';
+            
+            const snowAmount = snowfall[i]; // Already in cm
+            const snowQuality = getSnowQuality(snowAmount);
+            
+            snowCell.innerHTML = `
+              <div class="snow-amount">${snowAmount.toFixed(1)} cm</div>
+              <div class="snow-bar ${snowQuality}"></div>
+              <div class="data-source">${dataSourceLabel}</div>
+            `;
+            
+            snowRow.appendChild(snowCell);
+          }
+        } else {
+          // Handle missing snow data
+          for (let i = 0; i < 7; i++) {
+            const snowCell = document.createElement('td');
+            snowCell.className = 'snow-cell';
+            snowCell.innerHTML = `
+              <div class="snow-amount">-</div>
+              <div class="snow-bar red"></div>
+              <div class="data-source">No data</div>
+            `;
+            snowRow.appendChild(snowCell);
+          }
+        }
+        
+        tableBody.appendChild(snowRow);
+        
+        // Create temperature row
+        if (dataSource.daily.temperature_2m_max) {
+          const tempRow = document.createElement('tr');
+          tempRow.innerHTML = '<td class="metric-label">🌡️ High (°C)</td>';
+          
+          const temperatures = dataSource.daily.temperature_2m_max;
+          for (let i = 0; i < 7; i++) {
+            const tempCell = document.createElement('td');
+            tempCell.textContent = `${temperatures[i].toFixed(1)}°C`;
+            tempCell.style.color = getTemperatureColor(temperatures[i]);
+            tempRow.appendChild(tempCell);
+          }
+          
+          tableBody.appendChild(tempRow);
+        }
+        
+        // Create precipitation row
+        if (dataSource.daily.precipitation_sum) {
+          const precipRow = document.createElement('tr');
+          precipRow.innerHTML = '<td class="metric-label">🌧️ Precipitation (mm)</td>';
+          
+          const precipitation = dataSource.daily.precipitation_sum;
+          for (let i = 0; i < 7; i++) {
+            const precipCell = document.createElement('td');
+            precipCell.textContent = precipitation[i] > 0 ? `${precipitation[i].toFixed(1)} mm` : '0 mm';
+            precipCell.style.color = precipitation[i] > 0 ? '#1976d2' : '#666';
+            precipRow.appendChild(precipCell);
+          }
+          
+          tableBody.appendChild(precipRow);
+        }
+      }
+    }
+
+    function getBestDataSource(resortData) {
+      if (resortData.gfs && resortData.gfs.daily && resortData.gfs.daily.snowfall_sum) {
+        return resortData.gfs;
+      }
+      return resortData.openMeteo || resortData.gfs;
+    }
+
+    function getDataSourceLabel(resortData, dataSource) {
+      if (dataSource === resortData.gfs) {
+        return 'GFS';
+      } else if (dataSource === resortData.openMeteo) {
+        return 'Open-Meteo';
+      }
+      return 'Unknown';
+    }
+
+    function getSnowQuality(snowAmount) {
+      if (snowAmount === 0) return 'red';
+      if (snowAmount <= 5) return 'orange';
+      return 'green';
+    }
+
+    function getTemperatureColor(temp) {
+      if (temp < 0) return '#1976d2';
+      if (temp < 10) return '#388e3c';
+      if (temp < 20) return '#f57c00';
+      return '#d32f2f';
+    }
+
+    function showResortLoading() {
+      document.getElementById('resort-loading').classList.remove('hidden');
+      document.getElementById('resort-forecast-table').classList.add('hidden');
+    }
+
+    function hideResortLoading() {
+      document.getElementById('resort-loading').classList.add('hidden');
+      document.getElementById('resort-forecast-table').classList.remove('hidden');
+    }
+
+    function showResortError(message) {
+      hideResortLoading();
+      // You could add error display here
+      console.error(message);
+    }
+
+    function hideResortError() {
+      // Hide any error messages
+    }
+
+    function setupWebcam() {
+      const webcamImg = document.getElementById('resort-webcam');
+      const loadingOverlay = document.getElementById('webcam-loading');
+      
+      webcamImg.onload = function() {
+        loadingOverlay.style.display = 'none';
+        updateWebcamTimestamp();
+      };
+      
+      webcamImg.onerror = function() {
+        loadingOverlay.style.display = 'none';
+      };
+      
+      // Auto-refresh webcam every 30 seconds
+      setInterval(refreshWebcam, 30000);
+    }
+
+    function refreshWebcam() {
+      const webcamImg = document.getElementById('resort-webcam');
+      const loadingOverlay = document.getElementById('webcam-loading');
+      
+      loadingOverlay.style.display = 'flex';
+      
+      const timestamp = new Date().getTime();
+      webcamImg.src = `https://secure.skircr.com/cams2/fecam1/final.jpg?t=${timestamp}`;
+    }
+
+    function updateWebcamTimestamp() {
+      const timestampElement = document.getElementById('webcam-timestamp');
+      const now = new Date();
+      timestampElement.textContent = now.toLocaleTimeString();
+    }
+  </script>
+</body>
+</html>

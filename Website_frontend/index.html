@@ -30,77 +30,55 @@
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="hero-content">
-        <h1 class="hero-title">Find Your Perfect Powder Day</h1>
-        <p class="hero-subtitle">Real-time snow forecasts and live webcams from the world's best ski resorts</p>
-        <div class="hero-actions">
-          <a href="forecasts.html" class="btn btn-primary">View Snow Forecasts</a>
-          <a href="live-feeds.html" class="btn btn-secondary">Watch Live Feeds</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section">
-      <div class="features-content">
-        <h2>Why Choose SkiStoke?</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Real-Time Data</h3>
-            <p>Live snow forecasts updated every 30 seconds at resort elevations</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🌍</div>
-            <h3>Global Coverage</h3>
-            <p>Comprehensive forecasts for major ski resorts worldwide</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📹</div>
-            <h3>Live Webcams</h3>
-            <p>Multiple real-time snow depth cameras from top ski destinations</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🎯</div>
-            <h3>Accurate Forecasts</h3>
-            <p>Professional-grade snow accumulation forecasts from meteorological models</p>
+        <h1 class="hero-title">SkiStoke: Your Ultimate Snow Forecast Hub</h1>
+        
+        <!-- Search Section -->
+        <div class="search-section">
+          <h3>Search Ski Resorts</h3>
+          <div class="search-container">
+            <input type="text" id="resort-search" placeholder="Search for a ski resort..." autocomplete="off">
+            <div id="search-results" class="search-results hidden"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Quick Stats Section -->
-    <section class="stats-section">
-      <div class="stats-content">
-        <h2>Trusted by Skiers Worldwide</h2>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-number">9</div>
-            <div class="stat-label">Ski Resorts</div>
+    <!-- Main Features Section -->
+    <section class="main-features-section">
+      <div class="main-features-content">
+        <div class="feature-cards-grid">
+          <div class="main-feature-card">
+            <h3>Real-Time Conditions</h3>
+            <p>View HD live cams from top resorts worldwide, updated every 10 minutes with current temperature, wind data and snow depth measurements.</p>
+            <a href="live-feeds.html" class="feature-link">View Live Feeds →</a>
           </div>
-          <div class="stat-item">
-            <div class="stat-number">7</div>
-            <div class="stat-label">Day Forecasts</div>
+          <div class="main-feature-card">
+            <h3>7-Day Forecasts</h3>
+            <p>Detailed snow predictions with colour-coded ratings for conditions, avalanche risk, and confidence levels from our team of mountain meteorologists.</p>
+            <a href="forecasts.html" class="feature-link">View Forecasts →</a>
           </div>
-          <div class="stat-item">
-            <div class="stat-number">24/7</div>
-            <div class="stat-label">Live Updates</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">2000m</div>
-            <div class="stat-label">Elevation Data</div>
+          <div class="main-feature-card">
+            <h3>Resort Intelligence</h3>
+            <p>Interactive maps showing real-time snowfall across 9+ global locations. Filter by recent powder dumps, forecast quality, or terrain preferences.</p>
+            <a href="forecasts.html" class="feature-link">Explore Resorts →</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Call to Action -->
-    <section class="cta-section">
-      <div class="cta-content">
-        <h2>Ready to Plan Your Next Adventure?</h2>
-        <p>Get started with our comprehensive snow forecasts and live mountain conditions</p>
-        <div class="cta-actions">
-          <a href="forecasts.html" class="btn btn-primary">Check Forecasts</a>
-          <a href="about.html" class="btn btn-outline">Learn More</a>
+    <!-- Featured Forecast Section -->
+    <section class="featured-forecast-section">
+      <div class="featured-forecast-content">
+        <div class="forecast-main">
+          <h2>Featured Forecast: Whistler Blackcomb</h2>
+          <p>A major system approaching from the northwest will bring <strong>15-25cm fresh powder</strong> over the next 72 hours, with temperatures hovering around -5°C and moderate winds. Perfect conditions expected for Thursday morning runs.</p>
+        </div>
+        <div class="expert-alert">
+          <div class="alert-icon">ℹ️</div>
+          <div class="alert-content">
+            <h4>Expert Snow Alert</h4>
+            <p>This weekend's storm is tracking to be the <strong>largest January accumulation</strong> in the region since 2018. Our confidence level is 8/10.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -133,5 +111,74 @@
       </div>
     </footer>
   </div>
+
+  <script>
+    // Ski resort data
+    const skiResorts = [
+      { name: 'Whistler', country: 'Canada', slug: 'whistler', lat: 50.1163, lon: -122.9574, elevation: 2000 },
+      { name: 'Chamonix', country: 'France', slug: 'chamonix', lat: 45.9237, lon: 6.8694, elevation: 2000 },
+      { name: 'Hakuba', country: 'Japan', slug: 'hakuba', lat: 36.6975, lon: 137.8375, elevation: 2000 },
+      { name: 'Aspen', country: 'USA', slug: 'aspen', lat: 39.1911, lon: -106.8175, elevation: 2000 },
+      { name: 'Niseko', country: 'Japan', slug: 'niseko', lat: 42.8047, lon: 140.6874, elevation: 2000 },
+      { name: 'Verbier', country: 'Switzerland', slug: 'verbier', lat: 46.0992, lon: 7.2263, elevation: 2000 },
+      { name: 'Bariloche', country: 'Argentina', slug: 'bariloche', lat: -41.1335, lon: -71.3103, elevation: 2000 },
+      { name: 'Cardrona', country: 'New Zealand', slug: 'cardrona', lat: -44.8500, lon: 168.9500, elevation: 2000 },
+      { name: 'Ohau', country: 'New Zealand', slug: 'ohau', lat: -44.2333, lon: 169.8500, elevation: 2000 }
+    ];
+
+    // Initialize search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      setupSearch();
+    });
+
+    function setupSearch() {
+      const searchInput = document.getElementById('resort-search');
+      const searchResults = document.getElementById('search-results');
+
+      searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        
+        if (query.length < 2) {
+          searchResults.classList.add('hidden');
+          return;
+        }
+
+        const filteredResorts = skiResorts.filter(resort => 
+          resort.name.toLowerCase().includes(query) || 
+          resort.country.toLowerCase().includes(query)
+        );
+
+        displaySearchResults(filteredResorts);
+      });
+
+      // Hide results when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-container')) {
+          searchResults.classList.add('hidden');
+        }
+      });
+    }
+
+    function displaySearchResults(resorts) {
+      const searchResults = document.getElementById('search-results');
+      
+      if (resorts.length === 0) {
+        searchResults.innerHTML = '<div class="search-result-item no-results">No resorts found</div>';
+      } else {
+        searchResults.innerHTML = resorts.map(resort => `
+          <div class="search-result-item" onclick="goToResort('${resort.slug}')">
+            <div class="resort-name">${resort.name}</div>
+            <div class="resort-country">${resort.country}</div>
+          </div>
+        `).join('');
+      }
+      
+      searchResults.classList.remove('hidden');
+    }
+
+    function goToResort(slug) {
+      window.location.href = `resort-${slug}.html`;
+    }
+  </script>
 </body>
 </html>

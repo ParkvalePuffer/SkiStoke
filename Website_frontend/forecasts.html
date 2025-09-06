@@ -73,20 +73,86 @@
         </div>
         
         <div class="legend">
-          <h3>Snow Quality Legend</h3>
+          <h3>Snow Chart Legend</h3>
           <div class="legend-items">
             <div class="legend-item">
-              <div class="legend-color red"></div>
+              <div class="legend-chart">
+                <div class="legend-bar" style="height: 0%; background: #ff6b6b;"></div>
+                <div class="legend-bar" style="height: 0%; background: #ff6b6b;"></div>
+                <div class="legend-bar" style="height: 0%; background: #ff6b6b;"></div>
+              </div>
               <span>No Snow (0 cm)</span>
             </div>
             <div class="legend-item">
-              <div class="legend-color orange"></div>
-              <span>Light Snow (0-5 cm)</span>
+              <div class="legend-chart">
+                <div class="legend-bar" style="height: 30%; background: #ffa726;"></div>
+                <div class="legend-bar" style="height: 20%; background: #ffa726;"></div>
+                <div class="legend-bar" style="height: 25%; background: #ffa726;"></div>
+              </div>
+              <span>Light Snow (0-2 cm)</span>
             </div>
             <div class="legend-item">
-              <div class="legend-color green"></div>
-              <span>Good Snow (5+ cm)</span>
+              <div class="legend-chart">
+                <div class="legend-bar" style="height: 50%; background: #ffa726;"></div>
+                <div class="legend-bar" style="height: 40%; background: #ffa726;"></div>
+                <div class="legend-bar" style="height: 45%; background: #ffa726;"></div>
+              </div>
+              <span>Medium Snow (2-5 cm)</span>
             </div>
+            <div class="legend-item">
+              <div class="legend-chart">
+                <div class="legend-bar" style="height: 70%; background: #66bb6a;"></div>
+                <div class="legend-bar" style="height: 60%; background: #66bb6a;"></div>
+                <div class="legend-bar" style="height: 65%; background: #66bb6a;"></div>
+              </div>
+              <span>Heavy Snow (5-10 cm)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-chart">
+                <div class="legend-bar" style="height: 90%; background: #1976d2;"></div>
+                <div class="legend-bar" style="height: 80%; background: #1976d2;"></div>
+                <div class="legend-bar" style="height: 85%; background: #1976d2;"></div>
+              </div>
+              <span>Very Heavy Snow (10+ cm)</span>
+            </div>
+          </div>
+          
+          <div class="time-periods-info">
+            <h4>Time Periods</h4>
+            <div class="time-periods-grid">
+              <div class="time-period-item">
+                <div class="time-period-bar" style="background: #1976d2;"></div>
+                <span>Morning (6am-12pm)</span>
+              </div>
+              <div class="time-period-item">
+                <div class="time-period-bar" style="background: #1976d2;"></div>
+                <span>Afternoon (12pm-6pm)</span>
+              </div>
+              <div class="time-period-item">
+                <div class="time-period-bar" style="background: #1976d2;"></div>
+                <span>Nighttime (6pm-6am)</span>
+              </div>
+            </div>
+            <p class="time-periods-note">
+              <small>Bar heights show snow intensity during each time period. Colors indicate total daily snowfall.</small>
+            </p>
+          </div>
+          
+          <div class="data-sources-info">
+            <h4>Data Sources</h4>
+            <div class="data-sources-grid">
+              <div class="data-source-item">
+                <strong>GFS</strong> - Global Forecast System (NOAA)
+                <br><small>High-resolution global weather model</small>
+              </div>
+              <div class="data-source-item">
+                <strong>Open-Meteo</strong> - European weather model
+                <br><small>Regional European forecasting system</small>
+              </div>
+            </div>
+            <p class="data-sources-note">
+              <small>We use the best available data source for each resort. GFS is preferred when available, with Open-Meteo as fallback.</small>
+            </p>
           </div>
         </div>
       </div>
