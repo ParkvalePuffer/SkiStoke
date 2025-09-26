@@ -6,9 +6,11 @@ def fetch_snow_forecast(region_name, lat, lon, days=7):
     # Use current date and look forward for forecast
     start_date = datetime.now(timezone.utc).date()
     end_date = start_date + timedelta(days=days-1)
+    
+    # API call for snow forecast at 2000m elevation
     url = (
         f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
-        f"&daily=temperature_2m_max,precipitation_sum&timezone=auto&start_date={start_date}&end_date={end_date}"
+        f"&elevation=2000&daily=snowfall_sum&timezone=auto&start_date={start_date}&end_date={end_date}"
     )
 
     response = requests.get(url)
@@ -24,27 +26,13 @@ def fetch_snow_forecast(region_name, lat, lon, days=7):
 
     data = response.json()
     daily_data = data.get("daily", {})
-    temperatures = daily_data.get("temperature_2m_max", [])
-    precipitation = daily_data.get("precipitation_sum", [])
+    snowfall = daily_data.get("snowfall_sum", [])
     
-    # Estimate snow: more realistic thresholds for different temperature ranges
-    estimated_snow = []
-    for temp, precip in zip(temperatures, precipitation):
-        if precip > 0:  # Only consider days with precipitation
-            if temp < 0:  # Below freezing = definitely snow
-                snow_cm = precip * 15  # 1mm rain ≈ 15cm snow when very cold
-            elif temp < 5:  # 0-5°C = likely snow/mixed
-                snow_cm = precip * 10  # 1mm rain ≈ 10cm snow when cold
-            elif temp < 10:  # 5-10°C = possible snow at elevation
-                snow_cm = precip * 5   # 1mm rain ≈ 5cm snow when cool
-            else:  # Above 10°C = unlikely to be snow
-                snow_cm = 0.0
-            estimated_snow.append(snow_cm)
-        else:
-            estimated_snow.append(0.0)
+    # Convert from mm to cm (1 cm = 10 mm)
+    snowfall_cm = [snow / 10 for snow in snowfall]
     
-    total = sum(estimated_snow)
-    print(f"{region_name}: {estimated_snow} → total: {total:.1f} cm (estimated from temp/precip)")
+    total = sum(snowfall_cm)
+    print(f"{region_name}: {snowfall_cm} → total: {total:.1f} cm (actual snow forecast at 2000m)")
     return total
 
 
