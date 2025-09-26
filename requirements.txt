@@ -1,0 +1,21 @@
+# SkiStoke Application Dependencies
+
+# Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# HTTP Requests
+requests==2.31.0
+
+# Database
+# SQLite is included with Python
+
+# Development Dependencies (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+flake8==6.1.0
+
+# Production Dependencies
+gunicorn==21.2.0
+python-multipart==0.0.6

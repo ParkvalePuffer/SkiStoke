@@ -5,10 +5,12 @@ A professional snow forecasting platform providing real-time weather data, live 
 ## 🌟 Features
 
 - **Live Snow Forecasts** for 9 major ski regions worldwide
-- **7-Day Weather Tables** with temperature, precipitation, and snow estimates
+- **7-Day Weather Tables** with GFS and Open-Meteo data comparison
 - **Live Snow Camera** with real-time snow depth measurement
 - **Professional Design** with responsive mobile layout
-- **Auto-refresh** functionality every 30 seconds
+- **RESTful API** with FastAPI backend
+- **Data Caching** for improved performance
+- **Error Handling** and logging
 
 ## 🏔️ Supported Regions
 
@@ -16,7 +18,7 @@ A professional snow forecasting platform providing real-time weather data, live 
 - **Europe**: Chamonix, Verbier
 - **Asia**: Niseko, Hakuba
 - **South America**: Bariloche
-- **Oceania**: Queenstown, Ohau
+- **Oceania**: Cardrona, Ohau
 
 ## 🚀 Live Demo
 
@@ -24,8 +26,10 @@ Visit the live site: [SkiStoke.com](https://skistoke.com)
 
 ## 🛠️ Technology Stack
 
+- **Backend**: FastAPI, Python 3.8+
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
-- **Weather API**: Open-Meteo
+- **Database**: SQLite
+- **Weather APIs**: Open-Meteo, GFS
 - **Hosting**: Netlify
 - **Version Control**: Git & GitHub
 
@@ -33,15 +37,27 @@ Visit the live site: [SkiStoke.com](https://skistoke.com)
 
 ```
 SkiStoke/
-├── index.html              # Main homepage
-├── style.css               # All styling and responsive design
-├── script.js               # JavaScript functionality
-├── live-camera.html        # Live snow camera page
-├── main.py                 # FastAPI backend (for local development)
-├── fetch.py                # Weather data fetching
-├── db.py                   # Database operations
-├── regions.json            # Ski region coordinates
-└── README.md               # This file
+├── backend/                    # Backend application
+│   ├── api/                    # API routes
+│   │   ├── __init__.py
+│   │   └── routes.py           # FastAPI routes
+│   ├── models/                 # Data models
+│   │   ├── __init__.py
+│   │   └── database.py         # Database operations
+│   ├── services/               # Business logic
+│   │   ├── __init__.py
+│   │   └── weather_service.py  # Weather data fetching
+│   ├── __init__.py
+│   └── main.py                 # FastAPI application
+├── js/                         # Frontend JavaScript
+│   └── app.js                  # Main application logic
+├── index.html                  # Main homepage
+├── forecasts.html              # Forecasts page
+├── style.css                   # All styling and responsive design
+├── config.py                   # Application configuration
+├── run.py                      # Application startup script
+├── requirements.txt            # Python dependencies
+└── README.md                   # This file
 ```
 
 ## 🔧 Local Development
@@ -54,13 +70,17 @@ SkiStoke/
 1. Clone the repository
 2. Install Python dependencies:
    ```bash
-   pip install fastapi uvicorn requests
+   pip install -r requirements.txt
    ```
-3. Run the backend server:
+3. Run the application:
    ```bash
-   uvicorn main:app --host 127.0.0.1 --port 8000
+   python run.py
    ```
-4. Open `index.html` in your browser
+   Or alternatively:
+   ```bash
+   uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+   ```
+4. Open your browser and navigate to `http://localhost:8000`
 
 ## 🌐 Deployment
 
@@ -73,9 +93,9 @@ This project is automatically deployed to [Netlify](https://netlify.com) when ch
 
 ## 📊 Data Sources
 
-- **Weather Data**: [Open-Meteo API](https://open-meteo.com)
+- **Weather Data**: [Open-Meteo API](https://open-meteo.com) and [GFS](https://www.ncep.noaa.gov/products/weather/gfs/)
 - **Live Webcams**: Various ski resort webcam feeds
-- **Snow Estimation**: Custom algorithm based on temperature and precipitation
+- **Snow Estimation**: Combined data from multiple weather models
 
 ## 🎯 Target Audience
 
