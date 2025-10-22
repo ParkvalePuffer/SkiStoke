@@ -1,0 +1,5 @@
+[33ma4a471e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Major refactor: Restructure project for better organization and efficiency
+[33maee1780[m Restructure project: move frontend files to root, clean up duplicate folders
+[33m37c3fb4[m Implement detailed period-based forecast for Cardrona page
+[33m00020d1[m Redesign website with multi-page structure and improved snow forecasting
+[33md5fe3e9[m Initial commit: SkiStoke snow forecasting platform with live webcams and weather data

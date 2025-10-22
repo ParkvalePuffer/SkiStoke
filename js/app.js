@@ -108,13 +108,18 @@ class SkiStokeApp {
                 return;
             }
 
+            console.log(`Fetching forecasts from: ${this.apiBaseUrl}/forecasts`);
             const response = await fetch(`${this.apiBaseUrl}/forecasts`);
+            console.log('Response status:', response.status, response.statusText);
+            
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
             const data = await response.json();
+            console.log('API response data:', data);
             this.weatherData = data.forecasts;
+            console.log('Weather data set:', Object.keys(this.weatherData));
             
             this.setCachedData(cacheKey, this.weatherData);
             this.displayAllForecasts();
@@ -131,16 +136,37 @@ class SkiStokeApp {
         const snowTableBody = document.getElementById('snow-table-body');
         const summaryGrid = document.getElementById('summary-grid');
         
-        if (!snowTableBody || !summaryGrid) return;
+        console.log('DOM elements found:', {
+            snowTableBody: !!snowTableBody,
+            summaryGrid: !!summaryGrid,
+            weatherData: Object.keys(this.weatherData),
+            skiResorts: this.skiResorts.length
+        });
+        
+        if (!snowTableBody) {
+            console.error('snow-table-body element not found');
+            return;
+        }
+        
+        if (!summaryGrid) {
+            console.warn('summary-grid element not found, skipping summary');
+        }
 
         // Clear existing content
         snowTableBody.innerHTML = '';
-        summaryGrid.innerHTML = '';
+        if (summaryGrid) {
+            summaryGrid.innerHTML = '';
+        }
 
         // Create rows for each resort
         this.skiResorts.forEach(resort => {
             const resortData = this.weatherData[resort.name];
-            if (!resortData) return;
+            if (!resortData) {
+                console.warn(`No data found for resort: ${resort.name}`);
+                return;
+            }
+
+            console.log(`Processing data for ${resort.name}:`, resortData);
 
             const gfsData = this.extractSnowfallData(resortData.gfs);
             const openMeteoData = this.extractSnowfallData(resortData.openMeteo);
@@ -151,14 +177,18 @@ class SkiStokeApp {
             this.createTableRow(resort, 'Open-Meteo', openMeteoData, 'openmeteo-row', false, snowTableBody);
             this.createTableRow(resort, 'Average', averageData, 'average-row', false, snowTableBody);
 
-            // Create summary card
-            this.createSummaryCard(resort, averageData, summaryGrid);
+            // Create summary card if summary grid exists
+            if (summaryGrid) {
+                this.createSummaryCard(resort, averageData, summaryGrid);
+            }
         });
 
         // Animate charts
         setTimeout(() => {
             this.animateSnowCharts();
-            this.animateSummaryCharts();
+            if (summaryGrid) {
+                this.animateSummaryCharts();
+            }
         }, 100);
     }
 

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test Forecasts - SkiStoke</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Navigation -->
+    <nav class="main-nav">
+      <div class="nav-content">
+        <div class="nav-brand">
+          <h1>❄️ SkiStoke</h1>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="page-header-content">
+        <h1>Test Snow Forecasts</h1>
+        <p>Testing data display</p>
+      </div>
+    </section>
+
+    <!-- Controls Section -->
+    <section class="controls">
+      <div class="control-buttons">
+        <button id="refreshBtn">🔄 Refresh All Forecasts</button>
+      </div>
+    </section>
+
+    <!-- Forecast Container -->
+    <section class="forecast-container">
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Fetching latest snow forecasts...</p>
+      </div>
+
+      <div class="surf-style-grid">
+        <div class="table-wrapper">
+          <table id="forecast-table-main">
+            <thead>
+              <tr>
+                <th rowspan="2" class="resort-column-header">
+                  <h3>Ski Resort</h3>
+                </th>
+                <th colspan="7" class="date-header">7-Day Snow Forecast</th>
+              </tr>
+              <tr id="day-headers">
+                <!-- Day headers will be populated by JavaScript -->
+              </tr>
+            </thead>
+            <tbody id="snow-table-body">
+              <!-- Resort rows will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="forecast-summary">
+          <h3>7-Day Snowfall Summary</h3>
+          <div class="summary-grid" id="summary-grid">
+            <!-- Summary bars will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <div id="error-message" class="error-message hidden">
+        <p>❌ Error loading weather data. Please try again.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Simple test script
+    console.log('Test script loaded');
+    
+    let weatherData = {};
+    const skiResorts = [
+        { name: 'Whistler', country: 'Canada', lat: 50.1163, lon: -122.9574, elevation: 2000 }
+    ];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded');
+        setupEventListeners();
+        updateDateHeaders();
+        loadAllForecasts();
+    });
+
+    function setupEventListeners() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                console.log('Refresh clicked');
+                loadAllForecasts();
+            });
+        }
+    }
+
+    function updateDateHeaders() {
+        console.log('Updating date headers');
+        const dayHeaders = document.getElementById('day-headers');
+        if (!dayHeaders) {
+            console.error('day-headers element not found');
+            return;
+        }
+
+        dayHeaders.innerHTML = '';
+        const today = new Date();
+
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+            
+            const th = document.createElement('th');
+            th.className = 'day-header';
+            
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+            const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            
+            th.innerHTML = `
+                <div class="day-name">${dayName}</div>
+                <div class="day-date">${monthDay}</div>
+            `;
+            
+            dayHeaders.appendChild(th);
+        }
+        console.log('Date headers updated');
+    }
+
+    async function loadAllForecasts() {
+        console.log('Loading forecasts...');
+        showLoading();
+        hideError();
+        
+        try {
+            console.log('Fetching from /api/forecasts');
+            const response = await fetch('/api/forecasts');
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('API response data:', data);
+            weatherData = data.forecasts;
+            console.log('Weather data set:', Object.keys(weatherData));
+            
+            displayAllForecasts();
+            hideLoading();
+
+        } catch (error) {
+            console.error('Failed to load forecasts:', error);
+            showError('Failed to load weather data. Please try again.');
+            hideLoading();
+        }
+    }
+
+    function displayAllForecasts() {
+        console.log('Displaying forecasts...');
+        const snowTableBody = document.getElementById('snow-table-body');
+        const summaryGrid = document.getElementById('summary-grid');
+        
+        console.log('DOM elements found:', {
+            snowTableBody: !!snowTableBody,
+            summaryGrid: !!summaryGrid,
+            weatherData: Object.keys(weatherData),
+            skiResorts: skiResorts.length
+        });
+        
+        if (!snowTableBody) {
+            console.error('snow-table-body element not found');
+            return;
+        }
+
+        // Clear existing content
+        snowTableBody.innerHTML = '';
+        if (summaryGrid) {
+            summaryGrid.innerHTML = '';
+        }
+
+        // Create rows for each resort
+        skiResorts.forEach(resort => {
+            const resortData = weatherData[resort.name];
+            if (!resortData) {
+                console.warn(`No data found for resort: ${resort.name}`);
+                return;
+            }
+
+            console.log(`Processing data for ${resort.name}:`, resortData);
+
+            const gfsData = extractSnowfallData(resortData.gfs);
+            const openMeteoData = extractSnowfallData(resortData.openMeteo);
+            const averageData = calculateAverage(gfsData, openMeteoData);
+
+            // Create table rows
+            createTableRow(resort, 'GFS', gfsData, 'gfs-row', true, snowTableBody);
+            createTableRow(resort, 'Open-Meteo', openMeteoData, 'openmeteo-row', false, snowTableBody);
+            createTableRow(resort, 'Average', averageData, 'average-row', false, snowTableBody);
+
+            // Create summary card if summary grid exists
+            if (summaryGrid) {
+                createSummaryCard(resort, averageData, summaryGrid);
+            }
+        });
+
+        console.log('Forecasts displayed');
+    }
+
+    function extractSnowfallData(data) {
+        if (!data || !data.daily || !data.daily.snowfall_sum) {
+            return new Array(7).fill(0);
+        }
+        
+        const snowfall = data.daily.snowfall_sum;
+        return snowfall.map(snow => snow ? snow / 10 : 0); // Convert mm to cm
+    }
+
+    function calculateAverage(gfsData, openMeteoData) {
+        const average = [];
+        for (let i = 0; i < 7; i++) {
+            const gfs = gfsData[i] || 0;
+            const openMeteo = openMeteoData[i] || 0;
+            average[i] = (gfs + openMeteo) / 2;
+        }
+        return average;
+    }
+
+    function createTableRow(resort, label, data, rowClass, isFirstRow, container) {
+        const row = document.createElement('tr');
+        row.className = rowClass;
+
+        // Resort name cell with rowspan for first row only
+        if (isFirstRow) {
+            const nameCell = document.createElement('td');
+            nameCell.className = 'resort-name-cell';
+            nameCell.setAttribute('rowspan', '3');
+            nameCell.innerHTML = `<h4 class="resort-name">${resort.name}, ${resort.country}</h4>`;
+            row.appendChild(nameCell);
+        }
+
+        // Forecast cells for each day
+        for (let i = 0; i < 7; i++) {
+            const forecastCell = document.createElement('td');
+            forecastCell.className = 'forecast-cell';
+            
+            const snowAmount = data[i] || 0;
+            const intensityClass = getIntensityClass(snowAmount);
+
+            forecastCell.innerHTML = `
+                <div class="intensity-bg ${intensityClass}"></div>
+                <div class="snow-amount">${snowAmount.toFixed(1)} cm</div>
+                <div class="snow-chart" data-snow="${snowAmount}">
+                    <div class="chart-bars">
+                        <div class="chart-bar"></div>
+                        <div class="chart-bar"></div>
+                        <div class="chart-bar"></div>
+                    </div>
+                </div>
+                <div class="data-source">${label}</div>
+            `;
+
+            row.appendChild(forecastCell);
+        }
+
+        container.appendChild(row);
+    }
+
+    function createSummaryCard(resort, averageData, container) {
+        const totalSnow = averageData.reduce((sum, snow) => sum + snow, 0);
+        const maxSnow = Math.max(...averageData);
+        
+        const card = document.createElement('div');
+        card.className = 'summary-resort';
+        card.innerHTML = `
+            <h4>${resort.name}</h4>
+            <div class="summary-chart" data-total="${totalSnow}">
+                <div class="summary-bar" style="height: ${(totalSnow / maxSnow) * 100}%"></div>
+            </div>
+            <div class="summary-total">${totalSnow.toFixed(1)} cm</div>
+        `;
+
+        container.appendChild(card);
+    }
+
+    function getIntensityClass(snowAmount) {
+        if (snowAmount >= 20) return 'intensity-very-high';
+        if (snowAmount >= 15) return 'intensity-high';
+        if (snowAmount >= 10) return 'intensity-medium';
+        if (snowAmount >= 5) return 'intensity-low';
+        return 'intensity-none';
+    }
+
+    // UI helpers
+    function showLoading() {
+        const loading = document.getElementById('loading');
+        if (loading) loading.style.display = 'block';
+    }
+
+    function hideLoading() {
+        const loading = document.getElementById('loading');
+        if (loading) loading.style.display = 'none';
+    }
+
+    function showError(message) {
+        const error = document.getElementById('error-message');
+        if (error) {
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+    }
+
+    function hideError() {
+        const error = document.getElementById('error-message');
+        if (error) error.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
+

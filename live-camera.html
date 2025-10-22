@@ -8,6 +8,15 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-97XP61EN6J"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-97XP61EN6J');
+  </script>
   <style>
     .camera-page {
       text-align: center;
@@ -412,6 +421,15 @@
       currentWebcam = webcamId;
       const webcam = webcams[webcamId];
       
+      // Track webcam switch event
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'webcam_switch', {
+          'event_category': 'live_camera',
+          'event_label': webcamId,
+          'value': 1
+        });
+      }
+      
       if (webcam) {
         showLoading();
         const cameraImg = document.getElementById('live-snow-camera');
@@ -451,6 +469,15 @@
     function refreshCamera() {
       const cameraImg = document.getElementById('live-snow-camera');
       if (cameraImg) {
+        // Track manual refresh event
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'camera_refresh', {
+            'event_category': 'live_camera',
+            'event_label': 'manual_refresh',
+            'value': 1
+          });
+        }
+        
         showLoading();
         const webcam = webcams[currentWebcam];
         const timestamp = new Date().getTime();
@@ -486,6 +513,16 @@
     
     function openFullscreen() {
       const cameraImg = document.getElementById('live-snow-camera');
+      
+      // Track fullscreen event
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'fullscreen_view', {
+          'event_category': 'live_camera',
+          'event_label': 'fullscreen_mode',
+          'value': 1
+        });
+      }
+      
       if (cameraImg.requestFullscreen) {
         cameraImg.requestFullscreen();
       } else if (cameraImg.webkitRequestFullscreen) {

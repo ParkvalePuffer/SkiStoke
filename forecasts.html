@@ -8,6 +8,15 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-97XP61EN6J"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-97XP61EN6J');
+  </script>
 </head>
 <body>
   <div class="container">
@@ -37,7 +46,7 @@
     <!-- Controls Section -->
     <section class="controls">
       <div class="control-buttons">
-        <button id="refreshBtn" aria-label="Refresh weather forecast data">
+        <button id="refreshBtn" aria-label="Refresh weather forecast data" onclick="trackRefreshForecasts()">
           🔄 Refresh All Forecasts
         </button>
       </div>
@@ -70,6 +79,13 @@
               <!-- Rows will be populated by JavaScript -->
             </tbody>
           </table>
+        </div>
+        
+        <div class="forecast-summary">
+          <h3>7-Day Snowfall Summary</h3>
+          <div class="summary-grid" id="summary-grid">
+            <!-- Summary bars will be populated by JavaScript -->
+          </div>
         </div>
         
         <div class="legend">
@@ -192,5 +208,24 @@
   </div>
 
   <script src="js/app.js"></script>
+  
+  <script>
+    // Track forecast refresh events
+    function trackRefreshForecasts() {
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'forecast_refresh', {
+          'event_category': 'forecasts',
+          'event_label': 'manual_refresh',
+          'value': 1
+        });
+      }
+      
+      // Trigger the actual refresh functionality
+      const refreshBtn = document.getElementById('refreshBtn');
+      if (refreshBtn && window.skiStokeApp) {
+        window.skiStokeApp.refreshAllForecasts();
+      }
+    }
+  </script>
 </body>
 </html>

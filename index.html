@@ -9,6 +9,15 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-97XP61EN6J"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-97XP61EN6J');
+  </script>
 </head>
 <body>
   <div class="container">
@@ -177,6 +186,14 @@
     }
 
     function goToResort(slug) {
+      // Track resort search selection
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'resort_selected', {
+          'event_category': 'search',
+          'event_label': slug,
+          'value': 1
+        });
+      }
       window.location.href = `resort-${slug}.html`;
     }
   </script>

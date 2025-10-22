@@ -47,7 +47,7 @@ def main():
         
         logger.info("Starting SkiStoke application...")
         uvicorn.run(
-            app,
+            "backend.main:app",
             host="0.0.0.0",
             port=8000,
             reload=True,

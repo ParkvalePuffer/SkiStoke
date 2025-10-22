@@ -38,8 +38,9 @@ app.add_middleware(
 # Include API routes
 app.include_router(router, prefix="/api")
 
-# Serve static files (HTML, CSS, JS)
-app.mount("/static", StaticFiles(directory="."), name="static")
+# Serve static files (CSS, JS, images)
+app.mount("/js", StaticFiles(directory="js"), name="js")
+app.mount("/css", StaticFiles(directory="."), name="css")
 
 # Serve the main HTML files
 @app.get("/")
